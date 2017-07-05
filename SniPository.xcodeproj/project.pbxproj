@@ -14,6 +14,7 @@
 		0B52777F1EDE947500A261F3 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0B52777D1EDE947500A261F3 /* Main.storyboard */; };
 		0B52778A1EDE947500A261F3 /* SniPositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B5277891EDE947500A261F3 /* SniPositoryTests.swift */; };
 		0B5277951EDE947500A261F3 /* SniPositoryUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B5277941EDE947500A261F3 /* SniPositoryUITests.swift */; };
+		0B59CD4B1F0A246900DAD575 /* Snippet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B59CD4A1F0A246900DAD575 /* Snippet.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -47,6 +48,7 @@
 		0B5277901EDE947500A261F3 /* SniPositoryUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SniPositoryUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		0B5277941EDE947500A261F3 /* SniPositoryUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SniPositoryUITests.swift; sourceTree = "<group>"; };
 		0B5277961EDE947500A261F3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		0B59CD4A1F0A246900DAD575 /* Snippet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Snippet.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -103,6 +105,7 @@
 				0B52777D1EDE947500A261F3 /* Main.storyboard */,
 				0B5277801EDE947500A261F3 /* Info.plist */,
 				0B32FC341EE5417100ED7FCF /* DateExtension.swift */,
+				0B59CD4A1F0A246900DAD575 /* Snippet.swift */,
 			);
 			path = SniPository;
 			sourceTree = "<group>";
@@ -264,6 +267,7 @@
 				0B52777A1EDE947500A261F3 /* ViewController.swift in Sources */,
 				0B32FC351EE5417100ED7FCF /* DateExtension.swift in Sources */,
 				0B5277781EDE947500A261F3 /* AppDelegate.swift in Sources */,
+				0B59CD4B1F0A246900DAD575 /* Snippet.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
