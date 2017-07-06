@@ -10,19 +10,66 @@ import Cocoa
 
 let VERBOSE = true
 
+struct Const {
+    enum UserDefaults: String {
+        case repo = "repo"
+        case githubAPIUrl = "github_api_url"
+        case githubToken = "github_token"
+        case lastSyncDate = "last_sync_date"
+    }
+}
+
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate {
     let statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
     let popover = NSPopover()
     let menu = NSMenu()
     let syncMenuItem = NSMenuItem(title: "Sync", action: #selector(sync(sender:)), keyEquivalent: "s")
+    let configRepoMenuItem = NSMenuItem(title: "Set Repo", action: #selector(showRepoConfig(sender:)), keyEquivalent: "r")
+    let configGithubAPIUrlMenuItem = NSMenuItem(title: "Set Github API Url", action: #selector(showGithubAPIUrlConfig(sender:)), keyEquivalent: "a")
+    let configGithubTokenMenuItem = NSMenuItem(title: "Set Github Token", action: #selector(showGithubTokenConfig(sender:)), keyEquivalent: "t")
+    let configShowMenuItem = NSMenuItem(title: "Show Config", action: #selector(showCurrentConfig(sender:)), keyEquivalent: "")
+    let configResetMenuItem = NSMenuItem(title: "Reset Config", action: #selector(resetConfig(sender:)), keyEquivalent: "")
     let quitMenuItem = NSMenuItem(title: "Quit", action: #selector(terminate(sender:)), keyEquivalent: "q")
     let environment: [String: String] = [:]
-    var lastSyncDate = Date()
     let dateFormatter = DateFormatter()
-    let repo = "git@github.com:ivanfoong/xcode-swift-snippets.git" // TODO: needs to be configurable
     var isSyncing = false
-    let githubToken = "<github token>"
+    
+    var repo: String {
+        get {
+            return UserDefaults.standard.string(forKey: Const.UserDefaults.repo.rawValue) ?? "git@github.com:ivanfoong/xcode-swift-snippets.git"
+        }
+        set {
+            UserDefaults.standard.set(newValue, forKey: Const.UserDefaults.repo.rawValue)
+        }
+    }
+    
+    var githubToken: String {
+        get {
+            return UserDefaults.standard.string(forKey: Const.UserDefaults.githubToken.rawValue) ?? ""
+        }
+        set {
+            UserDefaults.standard.set(newValue, forKey: Const.UserDefaults.githubToken.rawValue)
+        }
+    }
+    
+    var githubAPIUrl: String {
+        get {
+            return UserDefaults.standard.string(forKey: Const.UserDefaults.githubAPIUrl.rawValue) ?? "https://api.github.com/repos/ivanfoong/xcode-swift-snippets"
+        }
+        set {
+            UserDefaults.standard.set(newValue, forKey: Const.UserDefaults.githubAPIUrl.rawValue)
+        }
+    }
+    
+    var lastSyncDate: Date? {
+        get {
+            return UserDefaults.standard.object(forKey: Const.UserDefaults.lastSyncDate.rawValue) as? Date
+        }
+        set {
+            UserDefaults.standard.set(newValue, forKey: Const.UserDefaults.lastSyncDate.rawValue)
+        }
+    }
     
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         // Insert code here to initialize your application
@@ -35,18 +82,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
         menu.addItem(syncMenuItem)
         menu.addItem(NSMenuItem.separator())
+        menu.addItem(configRepoMenuItem)
+        menu.addItem(configGithubAPIUrlMenuItem)
+        menu.addItem(configGithubTokenMenuItem)
+        menu.addItem(configShowMenuItem)
+        menu.addItem(configResetMenuItem)
         menu.addItem(quitMenuItem)
         menu.delegate = self
         statusItem.menu = menu
-        
-        sync(sender: self)
-        
-//        let myPopup: NSAlert = NSAlert()
-//        myPopup.messageText = "environment"
-//        myPopup.informativeText = ProcessInfo.processInfo.environment.description
-//        myPopup.alertStyle = NSAlert.Style.warning
-//        myPopup.addButton(withTitle: "OK")
-//        myPopup.runModal()
     }
 
     func applicationWillTerminate(_ aNotification: Notification) {
@@ -87,10 +130,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                             let snippet = Snippet(filename: file, title: title, summary: summary, completionPrefix: completionPrefix, contents: contents)
                             //                    print("gitCheckout(master)", gitCheckout(branch: "master"))
                             self.createPR(for: snippet)
+                        } else {
+                            //TODO show error
+                            print("Failed to read snippet's title, content or completion prefix from plist")
                         }
                     } else {
                         //TODO show error
-                        print("Snippet validation failed due to missing title or code")
+                        print("Failed to read snippet from plist")
                     }
                 }
                 
@@ -105,6 +151,75 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 self.completedSyncing()
             }
         }
+    }
+    
+    @objc
+    func showRepoConfig(sender: AnyObject) {
+        if let repo = self.showConfig(with: "Enter repo:", and: "git@github.com:ivanfoong/xcode-swift-snippets.git") {
+            self.repo = repo
+        }
+    }
+    
+    @objc
+    func showGithubAPIUrlConfig(sender: AnyObject) {
+        if let githubAPIUrl = self.showConfig(with: "Enter Github API Url:", and: "https://api.github.com/repos/ivanfoong/xcode-swift-snippets") {
+            self.githubAPIUrl = githubAPIUrl
+        }
+    }
+    
+    @objc
+    func showGithubTokenConfig(sender: AnyObject) {
+        if let githubToken = self.showConfig(with: "Enter Github Token:", and: "Token") {
+            self.githubToken = githubToken
+        }
+    }
+    
+    @objc
+    func resetConfig(sender: AnyObject) {
+        self.resetConfig()
+    }
+    
+    @objc
+    func showCurrentConfig(sender: AnyObject) {
+        self.showCurrentConfig()
+    }
+    
+    private func showConfig(with message: String, and placeholder: String) -> String? {
+        let a = NSAlert()
+        a.messageText = message
+        a.addButton(withTitle: "Save")
+        a.addButton(withTitle: "Cancel")
+        
+        let inputTextField = NSTextField(frame: NSRect(x: 0, y: 0, width: 300, height: 24))
+        inputTextField.placeholderString = placeholder
+        a.accessoryView = inputTextField
+        let response = a.runModal()
+        switch response {
+        case .alertFirstButtonReturn: //Save
+            let enteredString = inputTextField.stringValue
+            print("Entered string = \"\(enteredString)\"")
+            return enteredString
+        case .alertSecondButtonReturn: //Cancel
+            break
+        default:
+            break
+        }
+        return nil
+    }
+    
+    private func resetConfig() {
+        UserDefaults.standard.set(nil, forKey: Const.UserDefaults.repo.rawValue)
+        UserDefaults.standard.set(nil, forKey: Const.UserDefaults.githubToken.rawValue)
+        UserDefaults.standard.set(nil, forKey: Const.UserDefaults.githubAPIUrl.rawValue)
+    }
+    
+    private func showCurrentConfig() {
+        let myPopup: NSAlert = NSAlert()
+        myPopup.messageText = "Current Config"
+        myPopup.informativeText = "Repo: \(self.repo)\nGithub API Url: \(self.githubAPIUrl)\nGithub Token: \(self.githubToken)"
+        myPopup.alertStyle = NSAlert.Style.warning
+        myPopup.addButton(withTitle: "OK")
+        myPopup.runModal()
     }
     
     private func completedSyncing() {
@@ -273,7 +388,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             return
         }
         
-        var request = URLRequest(url: URL(string: "https://api.github.com/repos/ivanfoong/xcode-swift-snippets/pulls")!)
+        var request = URLRequest(url: URL(string: "\(githubAPIUrl)/pulls")!)
         request.httpMethod = "POST"
         request.httpBody = httpBody
         request.addValue("token \(githubToken)", forHTTPHeaderField: "Authorization")
@@ -350,10 +465,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
 extension AppDelegate: NSMenuDelegate {
     func menuWillOpen(_ menu: NSMenu) {
+        var syncMenuItemTitle: String
         if isSyncing {
-            syncMenuItem.title = "Sync (Syncing)"
+            syncMenuItemTitle = "Sync (Syncing)"
+        } else if let lastSyncDate = lastSyncDate {
+            syncMenuItemTitle = "Sync (Last Sync: \(lastSyncDate.timeAgo))"
         } else {
-            syncMenuItem.title = "Sync (Last Sync: \(lastSyncDate.timeAgo))"
+            syncMenuItemTitle = "Sync (Last Sync: Never)"
         }
+        syncMenuItem.title = syncMenuItemTitle
     }
 }
