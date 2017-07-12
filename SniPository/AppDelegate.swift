@@ -327,13 +327,16 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     private func filesWithConflicts() -> [String] {
         let (output, _, _) = self.shell(at: self.snippetPath(), with: self.environment, "git", "diff", "--name-only", "--diff-filter=U")
         let filenames = output.flatMap { line -> String? in
-            return line
+            if line != "" {
+                return line
+            }
+            return nil
         }
         return filenames
-        
     }
     
     private func pullAndRebase() {
+        self.shell(at: self.snippetPath(), with: self.environment, verbose: VERBOSE, "if", "[", "$(ls", "-a", "|", "grep", ".git", "|", "wc", "-l)", "-eq", "0", "];", "then", "git", "init;", "fi")
         self.shell(at: self.snippetPath(), with: self.environment, verbose: VERBOSE, "git", "add", "--all")
         self.shell(at: self.snippetPath(), with: self.environment, verbose: VERBOSE, "git", "commit", "-m", "[STASH]")
         self.shell(at: self.snippetPath(), with: self.environment, verbose: VERBOSE, "git", "pull", "--rebase", "origin", "master")
