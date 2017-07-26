@@ -12,9 +12,16 @@
 		0B52777A1EDE947500A261F3 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B5277791EDE947500A261F3 /* ViewController.swift */; };
 		0B52777C1EDE947500A261F3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0B52777B1EDE947500A261F3 /* Assets.xcassets */; };
 		0B52777F1EDE947500A261F3 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0B52777D1EDE947500A261F3 /* Main.storyboard */; };
-		0B52778A1EDE947500A261F3 /* SniPositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B5277891EDE947500A261F3 /* SniPositoryTests.swift */; };
 		0B5277951EDE947500A261F3 /* SniPositoryUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B5277941EDE947500A261F3 /* SniPositoryUITests.swift */; };
 		0B59CD4B1F0A246900DAD575 /* Snippet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B59CD4A1F0A246900DAD575 /* Snippet.swift */; };
+		0BC7E4241F18C09F00ABAFC3 /* SniPositoryCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BC7E4231F18C09F00ABAFC3 /* SniPositoryCore.swift */; };
+		0BC7E4261F1C7BF300ABAFC3 /* CommandLine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BC7E4251F1C7BF300ABAFC3 /* CommandLine.swift */; };
+		0BC7E4281F1C804400ABAFC3 /* CommandLineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BC7E4271F1C804400ABAFC3 /* CommandLineTests.swift */; };
+		0BC7E42A1F1CA64800ABAFC3 /* Git.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BC7E4291F1CA64800ABAFC3 /* Git.swift */; };
+		0BC7E42C1F1CA81800ABAFC3 /* GitTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BC7E42B1F1CA81800ABAFC3 /* GitTests.swift */; };
+		0BD63F0A1F1F36590035A1E9 /* SniPositoryCoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD63F091F1F36590035A1E9 /* SniPositoryCoreTests.swift */; };
+		0BD63F0E1F209FAC0035A1E9 /* Github.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD63F0D1F209FAC0035A1E9 /* Github.swift */; };
+		0BD63F111F209FFB0035A1E9 /* GithubProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD63F101F209FFB0035A1E9 /* GithubProtocol.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -43,12 +50,19 @@
 		0B52777E1EDE947500A261F3 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		0B5277801EDE947500A261F3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		0B5277851EDE947500A261F3 /* SniPositoryTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SniPositoryTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		0B5277891EDE947500A261F3 /* SniPositoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SniPositoryTests.swift; sourceTree = "<group>"; };
 		0B52778B1EDE947500A261F3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		0B5277901EDE947500A261F3 /* SniPositoryUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SniPositoryUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		0B5277941EDE947500A261F3 /* SniPositoryUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SniPositoryUITests.swift; sourceTree = "<group>"; };
 		0B5277961EDE947500A261F3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		0B59CD4A1F0A246900DAD575 /* Snippet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Snippet.swift; sourceTree = "<group>"; };
+		0BC7E4231F18C09F00ABAFC3 /* SniPositoryCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SniPositoryCore.swift; sourceTree = "<group>"; };
+		0BC7E4251F1C7BF300ABAFC3 /* CommandLine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandLine.swift; sourceTree = "<group>"; };
+		0BC7E4271F1C804400ABAFC3 /* CommandLineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandLineTests.swift; sourceTree = "<group>"; };
+		0BC7E4291F1CA64800ABAFC3 /* Git.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Git.swift; sourceTree = "<group>"; };
+		0BC7E42B1F1CA81800ABAFC3 /* GitTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitTests.swift; sourceTree = "<group>"; };
+		0BD63F091F1F36590035A1E9 /* SniPositoryCoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SniPositoryCoreTests.swift; sourceTree = "<group>"; };
+		0BD63F0D1F209FAC0035A1E9 /* Github.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Github.swift; sourceTree = "<group>"; };
+		0BD63F101F209FFB0035A1E9 /* GithubProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GithubProtocol.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -106,6 +120,11 @@
 				0B5277801EDE947500A261F3 /* Info.plist */,
 				0B32FC341EE5417100ED7FCF /* DateExtension.swift */,
 				0B59CD4A1F0A246900DAD575 /* Snippet.swift */,
+				0BC7E4231F18C09F00ABAFC3 /* SniPositoryCore.swift */,
+				0BC7E4251F1C7BF300ABAFC3 /* CommandLine.swift */,
+				0BC7E4291F1CA64800ABAFC3 /* Git.swift */,
+				0BD63F0D1F209FAC0035A1E9 /* Github.swift */,
+				0BD63F101F209FFB0035A1E9 /* GithubProtocol.swift */,
 			);
 			path = SniPository;
 			sourceTree = "<group>";
@@ -113,8 +132,10 @@
 		0B5277881EDE947500A261F3 /* SniPositoryTests */ = {
 			isa = PBXGroup;
 			children = (
-				0B5277891EDE947500A261F3 /* SniPositoryTests.swift */,
 				0B52778B1EDE947500A261F3 /* Info.plist */,
+				0BC7E4271F1C804400ABAFC3 /* CommandLineTests.swift */,
+				0BC7E42B1F1CA81800ABAFC3 /* GitTests.swift */,
+				0BD63F091F1F36590035A1E9 /* SniPositoryCoreTests.swift */,
 			);
 			path = SniPositoryTests;
 			sourceTree = "<group>";
@@ -264,9 +285,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0BD63F0E1F209FAC0035A1E9 /* Github.swift in Sources */,
 				0B52777A1EDE947500A261F3 /* ViewController.swift in Sources */,
 				0B32FC351EE5417100ED7FCF /* DateExtension.swift in Sources */,
+				0BC7E4241F18C09F00ABAFC3 /* SniPositoryCore.swift in Sources */,
+				0BC7E4261F1C7BF300ABAFC3 /* CommandLine.swift in Sources */,
+				0BD63F111F209FFB0035A1E9 /* GithubProtocol.swift in Sources */,
 				0B5277781EDE947500A261F3 /* AppDelegate.swift in Sources */,
+				0BC7E42A1F1CA64800ABAFC3 /* Git.swift in Sources */,
 				0B59CD4B1F0A246900DAD575 /* Snippet.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -275,7 +301,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0B52778A1EDE947500A261F3 /* SniPositoryTests.swift in Sources */,
+				0BD63F0A1F1F36590035A1E9 /* SniPositoryCoreTests.swift in Sources */,
+				0BC7E42C1F1CA81800ABAFC3 /* GitTests.swift in Sources */,
+				0BC7E4281F1C804400ABAFC3 /* CommandLineTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

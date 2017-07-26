@@ -14,4 +14,5 @@ struct Snippet {
     var summary: String
     var completionPrefix: String
     var contents: String
+    var version: Int
 }
