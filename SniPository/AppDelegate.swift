@@ -25,37 +25,33 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     let popover = NSPopover()
     let menu = NSMenu()
     let syncMenuItem = NSMenuItem(title: "Sync", action: #selector(sync(sender:)), keyEquivalent: "s")
-    let configRepoMenuItem = NSMenuItem(title: "Set Repo", action: #selector(showRepoConfig(sender:)), keyEquivalent: "r")
-    let configGithubAPIUrlMenuItem = NSMenuItem(title: "Set Github API Url", action: #selector(showGithubAPIUrlConfig(sender:)), keyEquivalent: "a")
-    let configGithubTokenMenuItem = NSMenuItem(title: "Set Github Token", action: #selector(showGithubTokenConfig(sender:)), keyEquivalent: "t")
-    let configShowMenuItem = NSMenuItem(title: "Show Config", action: #selector(showCurrentConfig(sender:)), keyEquivalent: "")
-    let configResetMenuItem = NSMenuItem(title: "Reset Config", action: #selector(resetConfig(sender:)), keyEquivalent: "")
+    let configMenuItem = NSMenuItem(title: "Config", action: #selector(showConfig(sender:)), keyEquivalent: ",")
     let quitMenuItem = NSMenuItem(title: "Quit", action: #selector(terminate(sender:)), keyEquivalent: "q")
     let environment: [String: String] = [:]
     let dateFormatter = DateFormatter()
     var isSyncing = false
     
-    var repo: String {
+    var repo: String? {
         get {
-            return UserDefaults.standard.string(forKey: Const.UserDefaults.repo.rawValue) ?? "git@github.com:ivanfoong/xcode-swift-snippets.git"
+            return UserDefaults.standard.string(forKey: Const.UserDefaults.repo.rawValue)
         }
         set {
             UserDefaults.standard.set(newValue, forKey: Const.UserDefaults.repo.rawValue)
         }
     }
     
-    var githubToken: String {
+    var githubToken: String? {
         get {
-            return UserDefaults.standard.string(forKey: Const.UserDefaults.githubToken.rawValue) ?? ""
+            return UserDefaults.standard.string(forKey: Const.UserDefaults.githubToken.rawValue)
         }
         set {
             UserDefaults.standard.set(newValue, forKey: Const.UserDefaults.githubToken.rawValue)
         }
     }
     
-    var githubAPIUrl: String {
+    var githubAPIUrl: String? {
         get {
-            return UserDefaults.standard.string(forKey: Const.UserDefaults.githubAPIUrl.rawValue) ?? "http://github.com/api/v3/repos/ivanfoong/xcode-swift-snippets"
+            return UserDefaults.standard.string(forKey: Const.UserDefaults.githubAPIUrl.rawValue)
         }
         set {
             UserDefaults.standard.set(newValue, forKey: Const.UserDefaults.githubAPIUrl.rawValue)
@@ -80,19 +76,16 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         if let button = statusItem.button {
             button.image = NSImage(named: NSImage.Name(rawValue: "StatusBarButtonImage"))
         }
+        menu.autoenablesItems = false
         menu.addItem(syncMenuItem)
         menu.addItem(NSMenuItem.separator())
-        menu.addItem(configRepoMenuItem)
-        menu.addItem(configGithubAPIUrlMenuItem)
-        menu.addItem(configGithubTokenMenuItem)
-        menu.addItem(configShowMenuItem)
-        menu.addItem(configResetMenuItem)
+        menu.addItem(configMenuItem)
         menu.addItem(quitMenuItem)
         menu.delegate = self
         statusItem.menu = menu
         
-        if self.githubToken == "" {
-            showConfigWizard()
+        if self.repo == nil || self.githubAPIUrl == nil || self.githubToken == nil {
+            self.showConfigPrompt()
         }
     }
 
@@ -100,18 +93,21 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         // Insert code here to tear down your application
     }
     
-    func showConfigWizard() {
+    func showConfigPrompt() {
         let a = NSAlert()
         a.messageText = "Configs"
         a.addButton(withTitle: "Save")
         a.addButton(withTitle: "Cancel")
         
-        let repoInputTextField = NSTextField(frame: NSRect(x: 0, y: 0, width: 300, height: 24))
+        let repoInputTextField = NSTextField(frame: NSRect(x: 0, y: 56, width: 300, height: 24))
         repoInputTextField.placeholderString = "git@github.com:ivanfoong/xcode-swift-snippets.git"
+        repoInputTextField.stringValue = self.repo ?? ""
         let githubAPIUrlInputTextField = NSTextField(frame: NSRect(x: 0, y: 28, width: 300, height: 24))
         githubAPIUrlInputTextField.placeholderString = "http://github.com/api/v3/repos/ivanfoong/xcode-swift-snippets"
-        let githubTokenInputTextField = NSTextField(frame: NSRect(x: 0, y: 56, width: 300, height: 24))
-        githubTokenInputTextField.placeholderString = "Token"
+        githubAPIUrlInputTextField.stringValue = self.githubAPIUrl ?? ""
+        let githubTokenInputTextField = NSTextField(frame: NSRect(x: 0, y: 0, width: 300, height: 24))
+        githubTokenInputTextField.placeholderString = "<Github Personal API Token>"
+        githubTokenInputTextField.stringValue = self.githubToken ?? ""
         
         let containerView = NSView(frame: NSRect(x: 0, y: 0, width: 300, height: 90))
         containerView.addSubview(repoInputTextField)
@@ -125,9 +121,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             let repoString = repoInputTextField.stringValue
             let githubAPIUrlString = githubAPIUrlInputTextField.stringValue
             let githubTokenString = githubTokenInputTextField.stringValue
-            self.repo = repoString
-            self.githubAPIUrl = githubAPIUrlString
-            self.githubToken = githubTokenString
+            self.repo = repoString == "" ? nil : repoString
+            self.githubAPIUrl = githubAPIUrlString == "" ? nil : githubAPIUrlString
+            self.githubToken = githubTokenString == "" ? nil : githubTokenString
         case .alertSecondButtonReturn: //Cancel
             break
         default:
@@ -142,45 +138,18 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     @objc func sync(sender: AnyObject) {
         if isSyncing { return }
         
-        self.startingToSync()
-        let url = URL(string: "\(githubAPIUrl)/pulls")!
-        let engine = SniPositoryCore(githubAPIPullUrl: url, githubToken: self.githubToken, snippetPath: self.snippetPath())
-        DispatchQueue.global().async {
-            engine.initGit(with: self.repo)
-            engine.sync(with: self.environment, verbose: true)
-            self.completedSyncing()
+        if let repo = self.repo, let githubAPIUrl = self.githubAPIUrl, let githubToken = self.githubToken {
+            self.startingToSync()
+            let url = URL(string: "\(githubAPIUrl)/pulls")!
+            let engine = SniPositoryCore(githubAPIPullUrl: url, githubToken: githubToken, snippetPath: self.snippetPath())
+            DispatchQueue.global().async {
+                engine.initGit(with: repo)
+                engine.sync(with: self.environment, verbose: true)
+                self.completedSyncing()
+            }
+        } else {
+            showConfigPrompt()
         }
-    }
-    
-    @objc
-    func showRepoConfig(sender: AnyObject) {
-        if let repo = self.showConfig(with: "Enter repo:", and: "git@github.com:ivanfoong/xcode-swift-snippets.git") {
-            self.repo = repo
-        }
-    }
-    
-    @objc
-    func showGithubAPIUrlConfig(sender: AnyObject) {
-        if let githubAPIUrl = self.showConfig(with: "Enter Github API Url:", and: "https://api.github.com/repos/ivanfoong/xcode-swift-snippets") {
-            self.githubAPIUrl = githubAPIUrl
-        }
-    }
-    
-    @objc
-    func showGithubTokenConfig(sender: AnyObject) {
-        if let githubToken = self.showConfig(with: "Enter Github Token:", and: "Token") {
-            self.githubToken = githubToken
-        }
-    }
-    
-    @objc
-    func resetConfig(sender: AnyObject) {
-        self.resetConfig()
-    }
-    
-    @objc
-    func showCurrentConfig(sender: AnyObject) {
-        self.showCurrentConfig()
     }
     
     private func showConfig(with message: String, and placeholder: String) -> String? {
@@ -206,19 +175,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         return nil
     }
     
-    private func resetConfig() {
-        UserDefaults.standard.set(nil, forKey: Const.UserDefaults.repo.rawValue)
-        UserDefaults.standard.set(nil, forKey: Const.UserDefaults.githubToken.rawValue)
-        UserDefaults.standard.set(nil, forKey: Const.UserDefaults.githubAPIUrl.rawValue)
-    }
-    
-    private func showCurrentConfig() {
-        let myPopup: NSAlert = NSAlert()
-        myPopup.messageText = "Current Config"
-        myPopup.informativeText = "Repo: \(self.repo)\nGithub API Url: \(self.githubAPIUrl)\nGithub Token: \(self.githubToken)"
-        myPopup.alertStyle = NSAlert.Style.warning
-        myPopup.addButton(withTitle: "OK")
-        myPopup.runModal()
+    @objc
+    func showConfig(sender: AnyObject) {
+        showConfigPrompt()
     }
     
     private func startingToSync() {
@@ -239,6 +198,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
 extension AppDelegate: NSMenuDelegate {
     func menuWillOpen(_ menu: NSMenu) {
+        syncMenuItem.isEnabled = !isSyncing
         var syncMenuItemTitle: String
         if isSyncing {
             syncMenuItemTitle = "Sync (Syncing)"
@@ -248,6 +208,10 @@ extension AppDelegate: NSMenuDelegate {
             syncMenuItemTitle = "Sync (Last Sync: Never)"
         }
         syncMenuItem.title = syncMenuItemTitle
+    }
+    
+    override func validateMenuItem(_ menuItem: NSMenuItem) -> Bool {
+        return menuItem == self.syncMenuItem
     }
 }
 
